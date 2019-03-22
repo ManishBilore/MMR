@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    
+        <meta charset='utf-8' />
+        <title>MMR</title>
+        <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+        <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.53.1/mapbox-gl.js'></script>
+        <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.48.0/mapbox-gl.css' rel='stylesheet'/>
+     
+    <style>
+     
+    body 
+             { 
+             margin:0; 
+             padding:0; 
+             font-family:sans-serif; 
+             font-size:14px;
+             }
+             
+                                                                                       
+   #map {position:absolute; top:0; bottom:0; width:100%;}
+   
+      
+      
+    li 
+             {padding: 3px 0;}    
+       
+      
+    #panel
+             {
+             background: white; 
+             width: 400px; 
+             border-style:solid; 
+             border-width:1px; 
+             border-color:rgba(0,0,0,0.05);
+             position:absolute; 
+             right:16px;
+             top:16px;
+             box-shadow: 0 0 4px rgba(0,0,0,0.1);
+             color: rgba(0,0,0, 0.5);
+             }     
+                                                                                       
+     h4
+             {
+             text-transform: uppercase;
+             border-bottom: 1px solid rgba(0,0,0, 0.5)''
+             margin: 0;
+             padding: 16px;                                                                               
+             }
+     ul
+            {
+             list-style-type: none;    
+             margin: 0;
+             padding: 16px;
+            }
+     ul span
+            {
+             width:10px;
+             height:10px;
+             display:inline-block;
+             margin-right:8px;
+             border-radius:50%;
+             }
+
+     dd
+            {
+                margin-left:0;
+                margin-bottom:8px;
+                font-weight:bold;
+            }
+     .mapboxgl-popup-content
+            {
+             font-family:sans-serif; 
+             font-size:14px;
+             background: white; 
+             width: 200px; 
+             border-style:solid; 
+             border-width:1px; 
+             border-color:rgba(0,0,0,0.05); 
+             right:16px;
+             top:16px;
+             box-shadow: 0 0 4px rgba(0,0,0,0.1);
+             color: rgba(0,0,0, 0.5);
+
+             min-width: 150px;
+             max-width: 400px;
+            }
+
+     dl 
+            {
+             margin-bottom: 0;
+
+            }
+                             
+    </style>
+    
+  </head>
+  
+  
+  
+  <body>
+
+    <div id='map'></div>
+    
+    <div id="panel">
+                  <h4>MMR Web Map (WIP)</h4>
+                         <ul>
+                           <li><span style="background: #F9EDDB;"></span>One and Two Family Buildings</li>
+                           <li><span style="background: #f6d9cb;"></span>Multi-Family Walk-up Buildings</li>
+                           <li><span style="background: #f6d9cb;"></span>Multi-Family Elevator Buildings</li>
+                           <li><span style="background: #f1b89c;"></span>Mixed Residential and Commercial Buildings</li>
+                           <li><span style="background: #ff8591;"></span>Commercial and Office Buildings</li>
+                           <li><span style="background: #6a3d9a;"></span>Industrial and Manufaacturing</li>
+                           <li><span style="background: #6a7280;"></span>Transportation and Utility</li>
+                           <li><span style="background: #7bbae4;"></span>Public Facilities and Institutions</li>
+                           <li><span style="background: #a5df6f;"></span>Open Space and Outdorr Recreation</li>
+                           <li><span style="background: #8da2b4;"></span>Parking Facility</li>
+                           <li><span style="background: #9faabf;"></span>Vacant Land
+                           <li><span style="background: #f9f9f9; border: 1px solid #ccc; box-sizing:border-box;"></span>No Data
+                       </li>
+                         </ul>
+                       </div>
+    
+    <script>
+      
+        var LandUseNames = {
+            '01':'One and Two Family Buildings',
+            '02':'Multi-Family Walk-up Buildings',
+            '03':'Multi-Family Elevator Buildings',
+            '04':'Mixed Residential and Commercial Buildings',
+            '05':'Commercial and Office Buildings',
+            '06':'Industrial and Manufaacturing',
+            '07':'Transportation and Utility',
+            '08':'Public Facilities and Institutions',
+            '09':'Open Space and Outdorr Recreation',
+            '10':'Parking Facility',
+            '11':'Vacant Land',
+            '12':'No Data',
+        };
+
+
+
+
+
+
+
+
+
+
+        mapboxgl.accessToken = 'pk.eyJ1IjoiYmxhY2tzbm93bGVvcGFyZCIsImEiOiJjanI3cDMwdzUwaDBjNGFwZmZ5OWZtdW0yIn0.rM-0W9b4dFC58XHanjTsig';
+        var map = new mapboxgl.Map({
+        container: 'map', // container id
+        style: 'mapbox://styles/blacksnowleopard/cjtjburiv3fl51fp5m908yxjv', // stylesheet location
+        center: [72.875,19.065], // starting position [lng, lat]
+        zoom: 13,
+        minZoom: 13,
+        maxZoom: 18, // starting zoom
+        hash: true
+        });
+      /*
+        function onClick(event) 
+                {
+          console.log('Mouse Click');
+          console.log(event.point);     
+                }
+      map.on('click', onClick)
+*/
+     var nav = new mapboxgl.NavigationControl();
+     map.addControl (nav,'top-left');
+
+     // Add zoom and rotation controls to the map.
+     //map.addControl(new mapboxgl.NavigationControl());
+
+
+     map.on('mousemove', function(event){
+      //console.log(event);
+
+      if(map.loaded()){
+         var features = map.queryRenderedFeatures(event.point,{
+             layers: ['Lots']
+         });
+
+        map.getCanvas().style.cursor = features.length ? 'pointer':'';
+        }
+
+       /* if (features.length) {
+          map.getCanvas().style.cursor='pointer';
+        } else {
+          map.getCanvas().style.cursor='';
+        }*/
+      });
+
+
+
+      map.on('click',function(event) {
+          console.log('Mouse Click');
+          console.log(event.point);    
+
+         var geometry = event.point;
+         var parameters = {
+             layers: ['Lots']
+         };
+         var features = map.queryRenderedFeatures(geometry,parameters);
+         //console.log(features);
+         //console.log(features.length + 'features');
+         var Lots = features[0];
+         console.log(Lots);
+
+
+if (features.length) 
+        {
+
+         var bbl = Lots.properties.BBL||'—'; 
+         var LandUse = LandUseNames[Lots.properties.LandUse]||'—'; 
+         var ZoneDist = Lots.properties.ZoneDist1||'—'; 
+         var BldgClass = Lots.properties.BldgClass||'—'; 
+         var OwnerName = Lots.properties.OwnerName||'—'; 
+         
+         console.log(bbl, LandUse, ZoneDist, BldgClass, OwnerName);
+
+        
+                    var popup = new mapboxgl.Popup()
+                            .setLngLat(event.lngLat)
+                            .setHTML( '<dl>'+
+                                '<dt>BBL<//dt>'+
+                                '<dd>'+bbl+'</dd>'+
+
+                                '<dt>Land Use<//dt>'+
+                                '<dd>'+LandUse+'</dd>'+
+
+                                '<dt>Zoning District<//dt>'+
+                                '<dd>'+ZoneDist+'</dd>'+  
+
+                                '<dt>Building Class<//dt>'+
+                                '<dd>'+BldgClass+'</dd>'+
+
+                                '<dt>Owner<//dt>'+
+                                '<dd>'+OwnerName+'</dd>'+
+                            '</dl>')
+                            .addTo(map);
+        }
+
+
+      });
+    </script>
+    
+  </body>
+
+</html>
